@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const routes = require('./routes');
 const fixtures = require('./fixtures');
 const errorMiddleware = require('./middlewares/error');
+const Simulation = require('./services/simulation');
+const updateSensorTemperatureJob = require('./jobs/updateSensorTemperature');
 
 const app = express();
 
@@ -27,5 +29,13 @@ app.use(errorMiddleware);
 
 // Insert some initial data
 fixtures.createFixtures();
+
+// Configure simulation
+const simulation = new Simulation(5000, 60 * 60 * 1000);
+simulation.setAction(time => {
+  console.log('Tick with time: ' + new Date(time));
+  updateSensorTemperatureJob.run(time);
+});
+simulation.start();
 
 module.exports = app;
