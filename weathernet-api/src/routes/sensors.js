@@ -63,7 +63,7 @@ router.delete('/:id', function(req, res, next) {
   sensorModel
     .remove(id)
     .then(doc => {
-      res.status(204).json({ message: 'deleted' });
+      res.status(204).json({});
     })
     .catch(next);
 });

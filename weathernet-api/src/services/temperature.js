@@ -1,5 +1,5 @@
 const DarkSky = require('dark-sky');
-const darksky = new DarkSky('814d5786111a6a66196671584cc87176'); // Just hardcoded for now, should get from environment
+const darksky = new DarkSky('4a54b68d18b4c05c9034eeb3d22972ff'); // Just hardcoded for now, should get from environment
 
 // Get current temperature
 async function getCurrentTemperatureFromLocation(latitude, longitude) {
