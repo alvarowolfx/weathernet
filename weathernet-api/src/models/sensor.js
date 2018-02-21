@@ -1,21 +1,8 @@
 const db = require('../db');
-const Joi = require('joi');
-const sensorsDb = db.sensors;
 
-const sensorSchema = Joi.object().keys({
-  name: Joi.string()
-    .min(3)
-    .max(30)
-    .required(),
-  latitude: Joi.number()
-    .less(90)
-    .greater(-90)
-    .required(),
-  longitude: Joi.number()
-    .less(90)
-    .greater(-90)
-    .required()
-});
+const temperatureService = require('../services/temperature');
+
+const sensorsDb = db.sensors;
 
 function all() {
   return new Promise((resolve, reject) => {
@@ -54,13 +41,13 @@ function save(sensor) {
 }
 
 function _insert(sensor) {
-  return new Promise((resolve, reject) => {
-    const result = Joi.validate(sensor, sensorSchema);
-    const err = result.error;
-    if (err) {
-      reject(err);
-      return;
-    }
+  return new Promise(async (resolve, reject) => {
+    const temperature = await temperatureService.getCurrentTemperatureFromLocation(
+      sensor.latitude,
+      sensor.longitude
+    );
+
+    sensor.temperature = temperature;
 
     sensorsDb.insert([sensor], (err, newDocs) => {
       if (err) {
@@ -73,15 +60,14 @@ function _insert(sensor) {
 }
 
 function _update(sensor) {
-  const id = sensor._id;
+  const { _id } = sensor;
   delete sensor._id;
   return new Promise((resolve, reject) => {
-    sensorsDb.update({ _id: sensor._id }, sensor, err => {
+    sensorsDb.update({ _id }, { $set: sensor }, {}, err => {
       if (err) {
         reject(err);
         return;
       }
-
       resolve();
     });
   });

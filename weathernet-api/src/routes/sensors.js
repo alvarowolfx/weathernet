@@ -1,7 +1,23 @@
 const express = require('express');
+const Joi = require('joi');
 
 const router = express.Router();
 const sensorModel = require('../models/sensor');
+
+const sensorSchema = Joi.object().keys({
+  name: Joi.string()
+    .min(3)
+    .max(30)
+    .required(),
+  latitude: Joi.number()
+    .less(90)
+    .greater(-90)
+    .required(),
+  longitude: Joi.number()
+    .less(90)
+    .greater(-90)
+    .required()
+});
 
 /* GET sensor listing. */
 router.get('/', function(req, res, next) {
@@ -27,6 +43,12 @@ router.get('/:id', function(req, res, next) {
 /* POST create sensor. */
 router.post('/', function(req, res, next) {
   const sensor = req.body;
+  const result = Joi.validate(sensor, sensorSchema);
+  const err = result.error;
+  if (err) {
+    next(err);
+    return;
+  }
   sensorModel
     .save(sensor)
     .then(doc => {
@@ -41,7 +63,7 @@ router.delete('/:id', function(req, res, next) {
   sensorModel
     .remove(id)
     .then(doc => {
-      res.status(200).json({ message: 'Deleted' });
+      res.status(204).json({ message: 'deleted' });
     })
     .catch(next);
 });
