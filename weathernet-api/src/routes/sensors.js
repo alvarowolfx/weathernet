@@ -5,9 +5,10 @@ const sensorModel = require('../models/sensor');
 
 /* GET sensor listing. */
 router.get('/', function(req, res, next) {
-  sensorModel.all()
-    .then( sensors => {
-      res.status(200).json(sensors)
+  sensorModel
+    .all()
+    .then(sensors => {
+      res.status(200).json(sensors);
     })
     .catch(next);
 });
@@ -15,29 +16,32 @@ router.get('/', function(req, res, next) {
 /* GET sensor by id. */
 router.get('/:id', function(req, res, next) {
   const id = req.params.id;
-  sensorModel.get(id)
-    .then( sensor => {      
-      res.status(200).json(sensor)
+  sensorModel
+    .get(id)
+    .then(sensor => {
+      res.status(200).json(sensor);
     })
     .catch(next);
 });
 
 /* POST create sensor. */
 router.post('/', function(req, res, next) {
-  const sensor = req.body;  
-  sensorModel.save(sensor)
-    .then( doc => {
-      res.status(201).json(doc)
+  const sensor = req.body;
+  sensorModel
+    .save(sensor)
+    .then(doc => {
+      res.status(201).json(doc);
     })
     .catch(next);
 });
 
 /* DELETE delete sensor. */
 router.delete('/:id', function(req, res, next) {
-  const id = req.params.id;  
-  sensorModel.remove(id)
-    .then( doc => {
-      res.status(200).json({ message: 'Deleted'})
+  const id = req.params.id;
+  sensorModel
+    .remove(id)
+    .then(doc => {
+      res.status(200).json({ message: 'Deleted' });
     })
     .catch(next);
 });
